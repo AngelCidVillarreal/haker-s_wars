@@ -583,7 +583,6 @@
     </div>
 
     <script>
-        // Ajustado a min: 3 para el segundo rango (aprox. 3 victorias en PVP)
         const RANKS = [
             { min: 0, title: "JUNIOR DEV", color: "#00ff66", bg: "#030805" },
             { min: 3, title: "SYSTEM ADMIN", color: "#00e5ff", bg: "#020508" },
@@ -1184,13 +1183,24 @@
 
             if(isVictory) {
                 if(battleState.isTutorial) {
-                    // El entrenamiento NO otorga puntos de rango (netPoints) ni sube de nivel
                     playerData.credits += 100;
-                    alert(`¡ENTRENAMIENTO COMPLETADO!\nHas superado la simulación de práctica.\nRecibes 100 créditos iniciales. ¡Bienvenido a la red!`);
+                    
+                    // Añadir las 3 cartas extra del código inicial
+                    let starterCards = [
+                        { id: Date.now() + 1, name: "feline_daemon.bat", ascii: " /\\_/\\\n(^_._^)\n (___)", ram: 4, rarity: "glitch", hp: 220, atk: 55, level: 1, xp: 0, maxXp: 100 },
+                        { id: Date.now() + 2, name: "killer_bee.py", ascii: "  \\||/\n (o.o)\n  /||\\", ram: 3, rarity: "bug", hp: 90, atk: 50, level: 1, xp: 0, maxXp: 100 },
+                        { id: Date.now() + 3, name: "troyano_beast.exe", ascii: " /===\\\n| o o |\n \\___/", ram: 5, rarity: "troyano", hp: 400, atk: 90, level: 1, xp: 0, maxXp: 100 }
+                    ];
+
+                    starterCards.forEach(card => {
+                        playerData.collection.push(card);
+                        playerData.activeDeckIds.push(card.id);
+                    });
+
+                    alert(`¡ENTRENAMIENTO COMPLETADO!\nHas superado la simulación de práctica.\nRecibes 100 créditos y ¡3 nuevas cartas de script añadidas a tu mazo activo!`);
                     document.getElementById('global-header').style.display = 'flex';
                     switchScreen('main-menu');
                 } else {
-                    // Victorias normales en PVP otorgan 1 punto (necesitas 3 para subir al rango SYSTEM ADMIN)
                     playerData.netPoints += 1;
                     playerData.credits += 250;
                     
