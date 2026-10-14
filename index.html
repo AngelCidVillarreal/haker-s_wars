@@ -113,10 +113,27 @@
             display: flex;
         }
 
+        /* Pantallas específicas de Prólogo y Creación Inicial */
+        #prologue-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            gap: 15px;
+        }
+
+        .prologue-text {
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--term-cyan);
+            min-height: 120px;
+            text-shadow: 0 0 5px rgba(0,229,255,0.4);
+        }
+
         /* Menu Principal */
         .menu-logo {
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             margin: 15px 0;
             text-shadow: 0 0 8px currentColor;
             white-space: pre;
@@ -388,13 +405,46 @@
 <body class="crt">
     <div id="app-container">
         <!-- HEADER GLOBAL -->
-        <header id="global-header">
-            <div>CR: <span id="header-netpoints">0</span> | CRÉDITOS: $<span id="header-credits">250</span></div>
+        <header id="global-header" style="display:none;">
+            <div>CR: <span id="header-netpoints">0</span> | CRÉDITOS: $<span id="header-credits">100</span></div>
             <div id="header-rank-badge" class="user-rank-box">JUNIOR DEV</div>
         </header>
 
+        <!-- 0. PROLOGO CINEMATICO -->
+        <div id="prologue-screen" class="screen active">
+            <div class="menu-logo">
+╔═╗╦ ╦╔═╗╦═╗╔═╗╔═╗╦ ╦╔═╗╦═╗
+║  ╚╦╝╠═╣╠╦╝║╣ ║  ╠═╣║╣ ╠╦╝
+╚═╝ ╩ ╩ ╩╩╚═╚═╝╚═╝╩ ╩╚═╝╩╚═
+            </div>
+            <div class="prologue-text" id="prologue-box">
+                > Inicializando protocolos de seguridad...<br>
+                > Año 2030. Las corporaciones globales han monopolizado las redes de datos, filtrando la privacidad de los ciudadanos bajo estrictas leyes de vigilancia.<br>
+                > Desde la clandestinidad, una red descentralizada de NetWarriors lucha por la justicia digital y la libertad de la información.<br>
+                > Has establecido una conexión segura. Es hora de compilar tu primer script de defensa.
+            </div>
+            <button class="menu-btn" id="prologue-next-btn" onclick="advancePrologue()">[ INICIAR SECUENCIA ]</button>
+        </div>
+
+        <!-- 0.5 CREACIÓN DEL PRIMER SCRIPT -->
+        <div id="first-script-screen" class="screen">
+            <div class="section-title">&gt; COMPILACIÓN DE PRIMER SCRIPT (INIT)</div>
+            <div style="font-size:11px; margin-bottom:10px;">Diseña tu primer payload con estadísticas de prueba para el entrenamiento:</div>
+            <div class="form-group">
+                <label>NOMBRE DEL SCRIPT:</label>
+                <input type="text" id="init-name" value="ghost_init.sh">
+            </div>
+            <div class="form-group">
+                <label>DISEÑO ASCII (Max 3 líneas):</label>
+                <textarea id="init-ascii" rows="3"> /\_/\ 
+( o.o )
+ > ^ < </textarea>
+            </div>
+            <button class="menu-btn" onclick="completeFirstScriptCreation()">[ COMPILAR &amp; ENTRENAR ]</button>
+        </div>
+
         <!-- 1. MENU PRINCIPAL -->
-        <div id="main-menu" class="screen active">
+        <div id="main-menu" class="screen">
             <div class="menu-logo">
 ╦ ╦╔═╗╔═╗╦╔═╔═╗╦═╗╔═╗   ╦ ╦╔═╗╦═╗╔═╗
 ╠═╣╠═╣║  ╠╩╗║╣ ╠╦╝╚═╗   ║║║╠═╣╠╦╝╚═╗
@@ -413,7 +463,7 @@
         <!-- 2. PANTALLA DE BATALLA -->
         <div id="battle-screen" class="screen">
             <div class="battle-hud">
-                <span>OBJETIVO: DESTRUIR CORE AI</span>
+                <span id="battle-mode-title">OBJETIVO: DESTRUIR CORE AI</span>
                 <span id="b-timer">TIME: 03:00</span>
             </div>
 
@@ -464,8 +514,8 @@
 
         <!-- 3. GESTOR DE MAZO FIJO -->
         <div id="deck-screen" class="screen">
-            <div class="section-title">&gt; GESTOR DE MAZO FIJO (4 / 4)</div>
-            <div style="font-size:11px; margin-bottom:8px;" id="deck-sub-label">Elige tus 4 cartas fijas de batalla:</div>
+            <div class="section-title">&gt; GESTOR DE MAZO FIJO</div>
+            <div style="font-size:11px; margin-bottom:8px;" id="deck-sub-label">Elige tus cartas fijas de batalla:</div>
             <div class="scroll-list" id="deck-builder-list"></div>
             <button class="back-btn" onclick="switchScreen('main-menu')">&lt; VOLVER AL MENÚ</button>
         </div>
@@ -543,26 +593,20 @@
 
         let playerData = {
             netPoints: 0,
-            credits: 250,
-            collection: [
-                { id: 1, name: "rat_exploit.sh", ascii: " /\\_/\\\n( o.o )\n > ^ < ", ram: 2, rarity: "bug", hp: 120, atk: 35, level: 1, xp: 0, maxXp: 100 },
-                { id: 2, name: "feline_daemon.bat", ascii: " /\\_/\\\n(^_._^)\n (___)", ram: 4, rarity: "glitch", hp: 220, atk: 55, level: 1, xp: 0, maxXp: 100 },
-                { id: 3, name: "killer_bee.py", ascii: "  \\||/\n (o.o)\n  /||\\", ram: 3, rarity: "bug", hp: 90, atk: 50, level: 1, xp: 0, maxXp: 100 },
-                { id: 4, name: "troyano_beast.exe", ascii: " /===\\\n| o o |\n \\___/", ram: 5, rarity: "troyano", hp: 400, atk: 90, level: 1, xp: 0, maxXp: 100 }
-            ],
-            activeDeckIds: [1, 2, 3, 4],
+            credits: 100,
+            collection: [],
+            activeDeckIds: [],
             vault: []
         };
 
         let marketItems = [
             { id: 101, name: "scorpion_net.py", ascii: "  /--\\\n (o.o)/\n  \\--/", ram: 3, rarity: "glitch", hp: 180, atk: 45, cost: 120 },
-            { id: 102, name: "arachnid_bot.exe", ascii: " /\\/\\/\\\n( 0_0 )\n \\/\\/\\/", ram: 4, rarity: "virus", hp: 280, atk: 70, cost: 220 },
-            { id: 103, name: "zeroday_dragon.sh", ascii: " /\\_/\\\n( o.O )~~~\n \\___/", ram: 5, rarity: "troyano", hp: 450, atk: 100, cost: 350 },
-            { id: 104, name: "cyber_hound.bat", ascii: " /\\___/\\\n( o   o )\n (  ^  )", ram: 3, rarity: "virus", hp: 250, atk: 65, cost: 180 }
+            { id: 102, name: "arachnid_bot.exe", ascii: " /\\/\\/\\\n( 0_0 )\n \\/\\/\\/", ram: 4, rarity: "virus", hp: 280, atk: 70, cost: 220 }
         ];
 
         let battleState = {
             active: false,
+            isTutorial: false,
             timer: 180,
             ram: 5,
             maxRam: 10,
@@ -574,6 +618,49 @@
             selectedCardIndex: null,
             loopInterval: null
         };
+
+        let prologueStep = 0;
+        const prologueLines = [
+            "> Inicializando protocolos de seguridad...<br>> Año 2030. Las corporaciones globales han monopolizado las redes de datos, filtrando la privacidad de los ciudadanos bajo estrictas leyes de vigilancia.",
+            "> Desde la clandestinidad, una red descentralizada de NetWarriors lucha por la justicia digital y la libertad de la información.",
+            "> Has establecido una conexión segura. Es hora de compilar tu primer script de defensa."
+        ];
+
+        function advancePrologue() {
+            prologueStep++;
+            if(prologueStep < prologueLines.length) {
+                document.getElementById('prologue-box').innerHTML = prologueLines[prologueStep];
+                if(prologueStep === prologueLines.length - 1) {
+                    document.getElementById('prologue-next-btn').innerText = "[ CONFIGURAR SCRIPT INICIAL ]";
+                }
+            } else {
+                switchScreen('first-script-screen');
+            }
+        }
+
+        function completeFirstScriptCreation() {
+            let name = document.getElementById('init-name').value || "ghost_init.sh";
+            let ascii = document.getElementById('init-ascii').value || " /\\_/\\\n( o.o )\n > ^ < ";
+
+            let firstCard = {
+                id: Date.now(),
+                name: name,
+                ascii: ascii,
+                ram: 2,
+                rarity: "bug",
+                hp: 100,
+                atk: 30,
+                level: 1,
+                xp: 0,
+                maxXp: 100
+            };
+
+            playerData.collection.push(firstCard);
+            playerData.activeDeckIds.push(firstCard.id);
+
+            alert("¡Script inicial compilado con éxito! Ahora pasarás a una simulación de combate de entrenamiento (esta no otorgará experiencia ni puntos de rango).");
+            startTutorialBattle();
+        }
 
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -701,7 +788,7 @@
                 cost: sellPrice * 2
             });
 
-            alert(`Has vendido ${card.name} por $${sellPrice} créditos. Ahora está disponible en el Mercado Negro para recompra.`);
+            alert(`Has vendido ${card.name} por $${sellPrice} créditos.`);
             renderDeckBuilder();
             updateGlobalHeader();
         }
@@ -783,7 +870,7 @@
             delete newItem.cost;
             playerData.collection.push(newItem);
 
-            alert(`¡Has adquirido/recomprado ${newItem.name}! Añadido a tu colección.`);
+            alert(`¡Has adquirido ${newItem.name}!`);
             renderMarket();
             updateGlobalHeader();
         }
@@ -808,8 +895,11 @@
 
         function startBattle() {
             switchScreen('battle-screen');
+            document.getElementById('global-header').style.display = 'flex';
+            document.getElementById('battle-mode-title').innerText = "OBJETIVO: DESTRUIR CORE AI";
             battleState = {
                 active: true,
+                isTutorial: false,
                 timer: 180,
                 ram: 5,
                 maxRam: 10,
@@ -823,6 +913,28 @@
             };
             renderHand();
             updateBattleUI();
+        }
+
+        function startTutorialBattle() {
+            switchScreen('battle-screen');
+            document.getElementById('battle-mode-title').innerText = "BATALLA DE ENTRENAMIENTO (TUTORIAL)";
+            battleState = {
+                active: true,
+                isTutorial: true,
+                timer: 120,
+                ram: 8,
+                maxRam: 10,
+                towers: {
+                    player: { left: 500, core: 1000, right: 500 },
+                    enemy: { left: 200, core: 400, right: 200 }
+                },
+                units: [],
+                selectedCardIndex: null,
+                loopInterval: setInterval(updateBattle, 100)
+            };
+            renderHand();
+            updateBattleUI();
+            logBattle("[TUTORIAL] Inyecta tu script en Lane 01 para destruir la pasarela de práctica.");
         }
 
         function getActiveDeckCards() {
@@ -945,7 +1057,7 @@
                 return;
             }
 
-            if(Math.random() < 0.03) {
+            if(!battleState.isTutorial && Math.random() < 0.03) {
                 let lane = Math.floor(Math.random() * 2);
                 let oppCards = [
                     { name: "virus_worm.sh", ascii: " ~@~@~ ", hp: 150, atk: 40 },
@@ -1070,55 +1182,49 @@
             document.querySelectorAll('.unit').forEach(u => u.remove());
 
             if(isVictory) {
-                playerData.netPoints += 3;
-                playerData.credits += 250;
-                
-                let eliteCards = [
-                    { id: Date.now(), name: "god_mode_ai.exe", ascii: "  /\\/\\\n (O_O)~\n  >v< ", ram: 5, rarity: "troyano", hp: 600, atk: 130 },
-                    { id: Date.now()+1, name: "overlord_root.sh", ascii: "  /===\\\n [ # # ]\n  \\___/ ", ram: 4, rarity: "virus", hp: 500, atk: 115 }
-                ];
-                let rewardedCard = eliteCards[Math.floor(Math.random() * eliteCards.length)];
-                rewardedCard.level = 1; rewardedCard.xp = 0; rewardedCard.maxXp = 100;
+                if(battleState.isTutorial) {
+                    playerData.credits += 100;
+                    
+                    // Añadir las 3 cartas extra del código inicial
+                    let starterCards = [
+                        { id: Date.now() + 1, name: "feline_daemon.bat", ascii: " /\\_/\\\n(^_._^)\n (___)", ram: 4, rarity: "glitch", hp: 220, atk: 55, level: 1, xp: 0, maxXp: 100 },
+                        { id: Date.now() + 2, name: "killer_bee.py", ascii: "  \\||/\n (o.o)\n  /||\\", ram: 3, rarity: "bug", hp: 90, atk: 50, level: 1, xp: 0, maxXp: 100 },
+                        { id: Date.now() + 3, name: "troyano_beast.exe", ascii: " /===\\\n| o o |\n \\___/", ram: 5, rarity: "troyano", hp: 400, atk: 90, level: 1, xp: 0, maxXp: 100 }
+                    ];
 
-                playerData.collection.push(rewardedCard);
-                playerData.vault.push(rewardedCard);
-                alert(`¡VICTORIA! Core AI destruido.\n¡Has ganado la carta de élite '${rewardedCard.name}' y 250 créditos!`);
-            } else {
-                if(playerData.collection.length > 0) {
-                    let strongestIdx = 0;
-                    let maxPower = -1;
-                    playerData.collection.forEach((c, idx) => {
-                        let power = c.hp + c.atk;
-                        if(power > maxPower) {
-                            maxPower = power;
-                            strongestIdx = idx;
-                        }
+                    starterCards.forEach(card => {
+                        playerData.collection.push(card);
+                        playerData.activeDeckIds.push(card.id);
                     });
 
-                    let confiscatedCard = playerData.collection.splice(strongestIdx, 1)[0];
-
-                    let deckIdx = playerData.activeDeckIds.indexOf(confiscatedCard.id);
-                    if(deckIdx > -1) {
-                        playerData.activeDeckIds.splice(deckIdx, 1);
-                        if(playerData.activeDeckIds.length === 0 && playerData.collection.length > 0) {
-                            playerData.activeDeckIds.push(playerData.collection[0].id);
-                        }
-                    }
-
-                    marketItems.push({
-                        ...confiscatedCard,
-                        cost: Math.round((confiscatedCard.hp + confiscatedCard.atk) * 1.5)
-                    });
-
-                    alert(`DERROTA. El contrincante ha confiscado tu carta más fuerte: [${confiscatedCard.name}].\n¡Ahora está a la venta en el Mercado Negro para que puedas recomprarla!`);
+                    alert(`¡ENTRENAMIENTO COMPLETADO!\nHas superado la simulación de práctica.\nRecibes 100 créditos y ¡3 nuevas cartas de script añadidas a tu mazo activo!`);
+                    document.getElementById('global-header').style.display = 'flex';
+                    switchScreen('main-menu');
                 } else {
-                    alert("DERROTA. Tu Mainframe central ha sido comprometido.");
+                    playerData.netPoints += 1;
+                    playerData.credits += 250;
+                    
+                    let eliteCards = [
+                        { id: Date.now(), name: "god_mode_ai.exe", ascii: "  /\\/\\\n (O_O)~\n  >v< ", ram: 5, rarity: "troyano", hp: 600, atk: 130 },
+                        { id: Date.now()+1, name: "overlord_root.sh", ascii: "  /===\\\n [ # # ]\n  \\___/ ", ram: 4, rarity: "virus", hp: 500, atk: 115 }
+                    ];
+                    let rewardedCard = eliteCards[Math.floor(Math.random() * eliteCards.length)];
+                    rewardedCard.level = 1; rewardedCard.xp = 0; rewardedCard.maxXp = 100;
+
+                    playerData.collection.push(rewardedCard);
+                    playerData.vault.push(rewardedCard);
+                    alert(`¡VICTORIA! Core AI destruido.\n¡Has ganado +1 CR (Punto de Red), la carta de élite '${rewardedCard.name}' y 250 créditos!`);
+                    switchScreen('main-menu');
+                }
+            } else {
+                alert("DERROTA. Tu sistema ha sido repelido.");
+                if(battleState.isTutorial) {
+                    startTutorialBattle();
+                } else {
+                    switchScreen('main-menu');
                 }
             }
-            switchScreen('main-menu');
         }
-
-        updateGlobalHeader();
     </script>
 </body>
 </html>
