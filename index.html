@@ -16,7 +16,7 @@
             --term-purple: #b000ff;
         }
 
-        * {
+       * {
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
@@ -24,6 +24,7 @@
             padding: 0;
         }
 
+        /* Ajustado para ocupar toda la pantalla sin restricciones de ancho máximo */
         body {
             background-color: var(--term-bg);
             color: var(--term-green);
@@ -33,9 +34,25 @@
             width: 100vw;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            justify-content: stretch;
+            align-items: stretch;
             transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Eliminamos las restricciones de max-width y max-height para pantalla completa fluida */
+        #app-container {
+            width: 100vw;
+            height: 100vh;
+            max-width: none;
+            max-height: none;
+            display: flex;
+            flex-direction: column;
+            border: none; /* Quitamos el borde exterior para un look más inmersivo de terminal completa */
+            box-shadow: none;
+            background: #020503;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.5s ease;
         }
 
         /* CRT Overlay effect */
